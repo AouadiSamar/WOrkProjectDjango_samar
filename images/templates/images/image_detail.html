@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Details</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }     
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .image-detail-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h2 {
+            font-size: 30px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #FFB300;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Styles for the popup */
+        .popup {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="image-detail-container">
+        <h2>{{ image.title }}</h2>
+        <img src="{{ image.image.url }}" alt="{{ image.title }}">
+
+        {% if image.description %}
+            <p>{{ image.description }}</p>
+        {% else %}
+            <p>No description available.</p>
+        {% endif %}
+
+        <!-- Edit Button -->
+        <button id="edit-button">Edit</button>
+
+        <!-- Popup Window -->
+        <div id="edit-popup" class="popup">
+            <div class="popup-content">
+                <span class="close">&times;</span>
+                <h3>Edit Image</h3>
+                <form id="update-form" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <label for="id_title">Title:</label>
+                    <input type="text" name="title" id="id_title" value="{{ image.title }}">
+                
+                    <label for="id_description">Description:</label>
+                    <textarea name="description" id="id_description">{{ image.description }}</textarea>
+                
+                    <input type="file" name="image" id="id_image">
+                
+                    <button type="submit">Save</button>
+                </form>
+
+                <!-- New "Back to Image Details" button -->
+                <a href="{{ image.get_absolute_url }}" class="back-button">Back to image details</a>
+            </div>
+        </div>
+
+        <a href="{% url 'image_list' %}" > Back to Gallery</a>
+    </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var editButton = document.getElementById("edit-button");
+    var popup = document.getElementById("edit-popup");
+    var close = document.querySelector(".close");
+
+    // Open the popup
+    editButton.addEventListener("click", function () {
+        popup.style.display = "flex";
+    });
+
+    // Close the popup
+    close.addEventListener("click", function () {
+        popup.style.display = "none";
+    });
+
+    // Close the popup if clicked outside
+    window.addEventListener("click", function (event) {
+        if (event.target === popup) {
+            popup.style.display = "none";
+        }
+    });
+
+    // Update with automatic redirection
+    document.getElementById("update-form").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevents redirection
+
+        var formData = new FormData(this);
+        fetch(window.location.href, { // Sends the request to the same URL
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "{% url 'image_list' %}";
+            } else {
+                alert("Error during update: " + JSON.stringify(data.errors));
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>neonumy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Enhanced header */
+        .j{color:#FFB300;}
+
+        /* Header container */
+        .header-container {
+            background-color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;   
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Top navigation bar */
+        .nav-top {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center the content horizontally */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Brand section */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Brand icon styles */
+        .brand-icon {
+            font-size: 28px;
+            color: #3498db;
+        }
+
+        /* Brand text style */
+        .brand-text {
+            font-size: 30px;  /* Font size */
+            color: #FFB300; 
+            text-align: center; /* Center the text */
+            flex-grow: 1;  /* Allow text to take available space */
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        /* Upload section */
+        .nav-upload {
+            text-align: center;
+            background-color: #fafafa;
+            padding: 10px 0;
+            margin-top: 20px; /* Adds space below the navbar */
+        }
+
+        /* Upload button style */
+        .upload-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect for the upload button */
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        /* Main content */
+        h2 {
+            text-align: center;
+            margin: 30px 0;
+            color: #2c3e50;
+            font-size: 28px;
+        }
+
+        /* Image container layout */
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;  /* Allow images to wrap to the next line */
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* Image card style */
+        .image-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease;
+            flex-basis: calc(25% - 20px); /* Set width of 25% for 4 items per row */
+        }
+
+        /* Hover effect for image card */
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Image style */
+        .image-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        /* Actions container style */
+        .card-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Action button style */
+        .action-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Delete button style */
+        .action-btn.delete-btn {
+            background-color: #e74c3c;
+        }
+
+        /* Hover effect for action buttons */
+        .action-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Hover effect for delete button */
+        .action-btn.delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Brand icon style */
+        .brand-icon {
+            width: 280px;  /* Adjust the width */
+            height: auto; /* Let height adjust automatically */
+            margin-right: 10px; /* Space between image and text */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header section -->
+    <div class="header-container">
+        <div class="nav-top">
+            <p class="brand-text">Navigation</p> <!-- Navigation title -->
+        </div>
+    </div>
+
+    <!-- Upload section -->
+    <div class="nav-upload">
+        <a href="{% url 'image_upload' %}" class="upload-btn">
+            <i class="fas fa-cloud-upload-alt"></i>
+            Upload an image
+        </a>
+    </div>
+
+    <h2>Neonumy's Gallery</h2>
+
+    <!-- Gallery container -->
+    <div class="image-container">
+        {% for image in images %}
+            <!-- Image card -->
+            <div class="image-card">
+                <img src="{{ image.image.url }}" alt="{{ image.title }}">
+                <div class="card-actions">
+                    <!-- View image action -->
+                    <a href="{% url 'image_detail' image.id %}" class="action-btn">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <!-- Delete image action -->
+                    <form action="{% url 'image_delete' image.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn delete-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
