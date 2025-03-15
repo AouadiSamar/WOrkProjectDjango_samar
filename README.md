@@ -73,3 +73,4 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+For test run python manage.py test
