@@ -5,7 +5,7 @@ SamarAouadi
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)  
 [![Django 5.1](https://img.shields.io/badge/Django-5.1-brightgreen)](https://www.djangoproject.com/)
 
-Django application with a GraphQL API for file management and email notifications.
+Django application with a GraphQL API for image management and email smtp notifications.
 
 ## 📋 Requirements
 - Python 3.8+
