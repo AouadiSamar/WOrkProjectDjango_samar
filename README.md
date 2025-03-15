@@ -1,4 +1,4 @@
-SamarAouadi
+SamarAouadi 
 
 # Django Project with GraphQL @SamarAouadi
 
